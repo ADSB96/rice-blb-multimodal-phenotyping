@@ -1,0 +1,23 @@
+enabled,model_id,model_name,severity_categories,algorithm,feature_key,feature_label
+1,4class_average_vi_randomforest,4-class average VI RandomForest,4,RandomForest,average_vi,average VI
+1,4class_average_vi_svm,4-class average VI SVM,4,SVM,average_vi,average VI
+1,4class_binned_vi_randomforest,4-class binned VI RandomForest,4,RandomForest,binned_vi,binned VI
+1,4class_binned_vi_svm,4-class binned VI SVM,4,SVM,binned_vi,binned VI
+1,4class_binned_vi_xgboost,4-class binned VI XGBoost,4,XGBoost,binned_vi,binned VI
+1,4class_cluster_ratio_randomforest,4-class cluster ratio RandomForest,4,RandomForest,cluster_ratio,cluster ratio
+1,4class_cluster_ratio_svm,4-class cluster ratio SVM,4,SVM,cluster_ratio,cluster ratio
+1,4class_cluster_ratio_plus_binned_vi_randomforest,4-class cluster ratio + binned VI RandomForest,4,RandomForest,cluster_plus_binned,cluster ratio + binned VI
+1,4class_cluster_ratio_plus_binned_vi_svm,4-class cluster ratio + binned VI SVM,4,SVM,cluster_plus_binned,cluster ratio + binned VI
+1,4class_cluster_ratio_plus_binned_vi_xgb_top30_randomforest,4-class cluster ratio + binned VI (XGB top30) RandomForest,4,RandomForest,cluster_plus_binned_top30,cluster ratio + binned VI (XGB top30)
+1,4class_cluster_ratio_plus_binned_vi_xgb_top30_svm,4-class cluster ratio + binned VI (XGB top30) SVM,4,SVM,cluster_plus_binned_top30,cluster ratio + binned VI (XGB top30)
+1,4class_cluster_ratio_plus_binned_vi_xgb_top30_plus_structural_randomforest,4-class cluster ratio + binned VI (XGB top30) + structural RandomForest,4,RandomForest,cluster_plus_binned_top30_plus_structural,cluster ratio + binned VI (XGB top30) + structural
+1,4class_cluster_ratio_plus_binned_vi_xgb_top30_plus_structural_svm,4-class cluster ratio + binned VI (XGB top30) + structural SVM,4,SVM,cluster_plus_binned_top30_plus_structural,cluster ratio + binned VI (XGB top30) + structural
+1,4class_cluster_ratio_plus_binned_vi_plus_structural_randomforest,4-class cluster ratio + binned VI + structural traits RandomForest,4,RandomForest,cluster_plus_binned_plus_structural,cluster ratio + binned VI + structural traits
+1,4class_cluster_ratio_plus_binned_vi_plus_structural_svm,4-class cluster ratio + binned VI + structural traits SVM,4,SVM,cluster_plus_binned_plus_structural,cluster ratio + binned VI + structural traits
+1,6class_average_vi_randomforest,6-class average VI RandomForest,6,RandomForest,average_vi,average VI
+1,6class_average_vi_svm,6-class average VI SVM,6,SVM,average_vi,average VI
+1,6class_binned_vi_randomforest,6-class binned VI RandomForest,6,RandomForest,binned_vi,binned VI
+1,6class_binned_vi_svm,6-class binned VI SVM,6,SVM,binned_vi,binned VI
+1,6class_binned_vi_xgboost,6-class binned VI XGBoost,6,XGBoost,binned_vi,binned VI
+1,6class_cluster_ratio_plus_binned_vi_randomforest,6-class cluster ratio + binned VI RandomForest,6,RandomForest,cluster_plus_binned,cluster ratio + binned VI
+1,6class_cluster_ratio_plus_binned_vi_svm,6-class cluster ratio + binned VI SVM,6,SVM,cluster_plus_binned,cluster ratio + binned VI
