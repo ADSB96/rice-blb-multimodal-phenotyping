@@ -35,20 +35,28 @@ Run the scripts in this order.
 
 ## Shared Input Dataset
 
-Before running the workflow, place one de-identified combined input table in `input_data/`:
+The public input tables are already partitioned using the grouped 90/10 split used in the manuscript:
 
-- `complete_dataset.csv`
-  Add the complete pre-partition dataset here in the public input folder. This file should contain all observations together before train/test splitting, while retaining the original 6-class `BB_rating` labels and the metadata columns needed by the scripts.
+- `input_data/training_90.csv`
+  - Contains the 90% training partition.
+  - Includes the updated full-training-threshold binned vegetation-index proportions, 12C cluster-ratio features, point-cloud average vegetation-index features, structural traits, the original 6-class `BB_rating`, the derived `BB_rating_4class`, and `cv_fold`.
+- `input_data/holdout_test_10.csv`
+  - Contains the untouched 10% holdout partition with the same feature columns.
+  - The `cv_fold` column is blank because the holdout set is not used during cross-validation.
+- `input_data/training_90_grouped5fold_unit_assignments.csv`
+  - Unit-level grouped cross-validation assignments for the training set.
+- `input_data/input_dataset_summary.csv`
+  - Row, unit, and feature-count summary for the shared input tables.
 
-The grouped split script derives the 4-class version internally by collapsing BLB ratings 1 and 3 into class 3, and ratings 7 and 9 into class 9, so separate raw train/test source tables are not required.
+For fold `k`, rows in `training_90.csv` with `cv_fold == k` are the validation set, and all remaining rows are the training set. No microplot/unit appears in both the 90% training partition and the 10% holdout test partition.
 
-### 1. Create the grouped holdout split
+### 1. Optional: recreate the grouped holdout split from a complete table
 
 Script:
 - `02_grouped_split_and_cv/create_grouped_holdout_split.R`
 
 Purpose:
-- creates the 90% training and 10% holdout test split.
+- recreates the 90% training and 10% holdout test split if starting from a private/local complete dataset.
 - keeps each microplot/unit in only one partition.
 - preserves severity-class balance as closely as possible.
 
@@ -163,32 +171,27 @@ The publication model runners are written to preserve the reviewer-requested saf
 
 The model scripts can be pointed to different datasets through environment variables.
 
-The main Table 2 runner expects:
-- a 4-class training file
-- a 4-class holdout test file
-- a 6-class training file
-- a 6-class holdout test file
-- optional grouped fold-assignment files for the 4-class and 6-class training partitions
+By default, the main Table 2 runner reads:
+- `input_data/training_90.csv`
+- `input_data/holdout_test_10.csv`
+- `input_data/training_90_grouped5fold_unit_assignments.csv`
 
-If fold assignments are not already attached to the training data, the script can:
-- merge them from an assignment file, or
-- generate grouped 5-fold assignments directly from the training dataset.
+For 6-class models, the script uses `BB_rating`. For 4-class models, it uses `BB_rating_4class`, which collapses ratings 1 and 3 into class 3 and ratings 7 and 9 into class 9.
 
-For full Table 2 reruns, use datasets that contain the feature columns needed by the selected models. In particular:
-- `average VI` models require point-cloud average VI columns such as `pcavg_ndvi`, `pcavg_sri`, etc.
+The shared training and holdout files should contain the feature columns needed by the selected models. In particular:
+- `average VI` models require point-cloud average VI columns.
+- `binned VI` models require `*_bin*` proportion columns.
 - cluster-ratio models require `cluster_*_ratio` columns.
-- structural models require `structural_*` columns.
+- structural models require structural trait columns such as height, leaf area, canopy area, volume, or LAI.
 
 ## Main Environment Variables
 
 ### Table 2 runner
 
-- `JANI_ROOT`
-  - root folder containing `jani_stuff`
 - `MODEL_SPEC_FILE`
   - model specification CSV
 - `MODEL_OUTPUT_ROOT`
-  - output folder for Table 2 model runs
+  - output folder for Table 2 model runs; defaults to `outputs/publication_table2_grouped_cv_holdout_runs`
 - `FOUR_TRAIN_PATH`
 - `FOUR_TEST_PATH`
 - `SIX_TRAIN_PATH`
@@ -217,12 +220,12 @@ python3 05_tables/make_table2_revised.py
 ### Table 2 models using explicit dataset paths
 
 ```bash
-FOUR_TRAIN_PATH=/path/to/fourclass_grouped_train.csv \
-FOUR_TEST_PATH=/path/to/fourclass_grouped_test.csv \
-SIX_TRAIN_PATH=/path/to/sixclass_grouped_train.csv \
-SIX_TEST_PATH=/path/to/sixclass_grouped_test.csv \
-FOUR_CV_ASSIGN_PATH=/path/to/fourclass_grouped5fold_assignments.csv \
-SIX_CV_ASSIGN_PATH=/path/to/sixclass_grouped5fold_assignments.csv \
+FOUR_TRAIN_PATH=input_data/training_90.csv \
+FOUR_TEST_PATH=input_data/holdout_test_10.csv \
+SIX_TRAIN_PATH=input_data/training_90.csv \
+SIX_TEST_PATH=input_data/holdout_test_10.csv \
+FOUR_CV_ASSIGN_PATH=input_data/training_90_grouped5fold_unit_assignments.csv \
+SIX_CV_ASSIGN_PATH=input_data/training_90_grouped5fold_unit_assignments.csv \
 Rscript 04_models/run_revised_table2_rf_svm_cv_holdout_models.R
 ```
 

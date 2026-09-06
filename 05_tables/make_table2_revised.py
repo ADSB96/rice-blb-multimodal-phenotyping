@@ -26,9 +26,7 @@ def fmt_cv(row, prefix):
 
 script_dir = Path(__file__).resolve().parent
 bundle_root = script_dir.parent
-project_root = bundle_root.parent
-jani_root = Path(os.getenv("JANI_ROOT", str(project_root / "jani_stuff")))
-model_output_root = Path(os.getenv("MODEL_OUTPUT_ROOT", str(jani_root / "publication_table2_grouped_cv_holdout_runs")))
+model_output_root = Path(os.getenv("MODEL_OUTPUT_ROOT", str(bundle_root / "outputs" / "publication_table2_grouped_cv_holdout_runs")))
 summary_path = Path(os.getenv("TABLE2_SUMMARY_PATH", str(model_output_root / "table2_model_summary_detailed.csv")))
 spec_path = Path(os.getenv("MODEL_SPEC_FILE", str(bundle_root / "04_models" / "revised_table2_rf_svm_model_specs.csv")))
 out_dir = Path(os.getenv("TABLE2_OUTPUT_DIR", str(model_output_root)))

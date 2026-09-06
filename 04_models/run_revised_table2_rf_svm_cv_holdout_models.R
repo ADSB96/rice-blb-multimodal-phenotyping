@@ -19,18 +19,16 @@ script_path <- if (length(script_arg) > 0L) {
 }
 script_dir <- if (is.na(script_path)) normalizePath(getwd(), winslash = "/", mustWork = TRUE) else dirname(script_path)
 bundle_root <- normalizePath(file.path(script_dir, ".."), winslash = "/", mustWork = FALSE)
-project_root <- normalizePath(file.path(bundle_root, ".."), winslash = "/", mustWork = FALSE)
-jani_root <- Sys.getenv("JANI_ROOT", unset = file.path(project_root, "jani_stuff"))
 spec_file <- Sys.getenv("MODEL_SPEC_FILE", unset = file.path(script_dir, "revised_table2_rf_svm_model_specs.csv"))
-out_root <- Sys.getenv("MODEL_OUTPUT_ROOT", unset = file.path(jani_root, "publication_table2_grouped_cv_holdout_runs"))
+out_root <- Sys.getenv("MODEL_OUTPUT_ROOT", unset = file.path(bundle_root, "outputs", "publication_table2_grouped_cv_holdout_runs"))
 
 default_paths <- list(
-  four_train = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "fourclass_grouped_train_90_fulltrain_threshold_binned.csv"),
-  four_test = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "fourclass_grouped_test_10_fulltrain_threshold_binned.csv"),
-  six_train = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "sixclass_grouped_train_90_fulltrain_threshold_binned.csv"),
-  six_test = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "sixclass_grouped_test_10_fulltrain_threshold_binned.csv"),
-  four_cv_assign = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "cv_fold_specific", "fourclass", "fourclass_grouped_train_90_cv_validation_master_binned.csv"),
-  six_cv_assign = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "cv_fold_specific", "sixclass", "sixclass_grouped_train_90_cv_validation_master_binned.csv")
+  four_train = file.path(bundle_root, "input_data", "training_90.csv"),
+  four_test = file.path(bundle_root, "input_data", "holdout_test_10.csv"),
+  six_train = file.path(bundle_root, "input_data", "training_90.csv"),
+  six_test = file.path(bundle_root, "input_data", "holdout_test_10.csv"),
+  four_cv_assign = file.path(bundle_root, "input_data", "training_90_grouped5fold_unit_assignments.csv"),
+  six_cv_assign = file.path(bundle_root, "input_data", "training_90_grouped5fold_unit_assignments.csv")
 )
 
 paths <- list(
@@ -67,6 +65,27 @@ log_line <- function(...) {
 }
 
 safe_unique <- function(dt) unique(dt, by = names(dt))
+
+collapse_to_fourclass <- function(rating_vec) {
+  out <- as.integer(rating_vec)
+  out[out %in% c(1L, 3L)] <- 3L
+  out[out %in% c(7L, 9L)] <- 9L
+  out
+}
+
+prepare_severity_labels <- function(dt, severity_categories) {
+  out <- copy(dt)
+  if (severity_categories == 4L) {
+    if ("BB_rating_4class" %in% names(out)) {
+      out[, BB_rating := as.integer(BB_rating_4class)]
+    } else {
+      out[, BB_rating := collapse_to_fourclass(BB_rating)]
+    }
+  } else {
+    out[, BB_rating := as.integer(BB_rating)]
+  }
+  out
+}
 
 sanitize_feature_frame <- function(dt, feature_cols) {
   out <- copy(dt)
@@ -870,7 +889,7 @@ required_spec_cols <- c("model_id", "model_name", "severity_categories", "algori
 missing_spec <- setdiff(required_spec_cols, names(spec_dt))
 if (length(missing_spec) > 0L) stop("Missing required spec columns: ", paste(missing_spec, collapse = ", "))
 
-log_line("Using jani_root: %s\n", jani_root)
+log_line("Using output root: %s\n", out_root)
 log_line("Using spec file: %s\n", spec_file)
 log_line("Selected %d models\n", nrow(spec_dt))
 
@@ -884,6 +903,11 @@ for (dt in list(four_train_dt, four_test_dt, six_train_dt, six_test_dt)) {
   if ("source_file" %in% names(dt)) dt[, source_file := as.character(source_file)]
   dt[, BB_rating := as.integer(BB_rating)]
 }
+
+four_train_dt <- prepare_severity_labels(four_train_dt, 4L)
+four_test_dt <- prepare_severity_labels(four_test_dt, 4L)
+six_train_dt <- prepare_severity_labels(six_train_dt, 6L)
+six_test_dt <- prepare_severity_labels(six_test_dt, 6L)
 
 four_cv_dt <- attach_cv_folds(four_train_dt, paths$four_cv_assign, seed = 123L, severity_tag = "fourclass")
 six_cv_dt <- attach_cv_folds(six_train_dt, paths$six_cv_assign, seed = 124L, severity_tag = "sixclass")
