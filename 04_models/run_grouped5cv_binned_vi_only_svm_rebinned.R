@@ -500,7 +500,7 @@ run_svm_from_folds <- function(fold_bundle, cfg) {
     severity_categories = cfg$severity_categories,
     feature_label = cfg$feature_label,
     feature_count = length(feature_cols),
-    split = "grouped 5-fold CV on 80% training partition only",
+    split = "grouped 5-fold CV on 90% training partition only",
     smote_strategy = "SMOTE within training folds only",
     heldout_test_used = FALSE,
     outer_fold_source = "precomputed microplot-safe fold-specific rebinned datasets",
@@ -512,7 +512,7 @@ run_svm_from_folds <- function(fold_bundle, cfg) {
   summary_lines <- c(
     cfg$model_name,
     "",
-    "Evaluation: grouped 5-fold cross-validation by unit_norm on the 80% training partition only",
+    "Evaluation: grouped 5-fold cross-validation by unit_norm on the 90% training partition only",
     "The separate grouped holdout test set was not used.",
     "Only binned VI features were used.",
     "SMOTE was applied only within each training fold.",
@@ -568,7 +568,7 @@ append_model_log <- function(result_dt) {
     run_key = file.path("jani_stuff", "grouped_microplotsafe_rebinned_datasets", "grouped5cv_binned_vi_only_svm_rebinned", model_id),
     model_name = model_name,
     algorithm = algorithm,
-    split = "grouped5cv on 80% training only",
+    split = "grouped5cv on 90% training only",
     smote_strategy = "SMOTE within training folds only",
     feature_set = paste0(feature_label, " (", ifelse(severity_categories == 4L, "4-class", "6-class"), ")"),
     accuracy = accuracy,
@@ -593,7 +593,7 @@ append_model_log <- function(result_dt) {
   fwrite(combined, log_file)
 }
 
-six_master <- fread(file.path(cv_root, "sixclass", "sixclass_grouped_train_80_cv_validation_master_binned.csv"), nrows = 0)
+six_master <- fread(file.path(cv_root, "sixclass", "sixclass_grouped_train_90_cv_validation_master_binned.csv"), nrows = 0)
 feature_cols <- grep("_bin[1-6]$", names(six_master), value = TRUE)
 
 cfgs <- list(
@@ -632,7 +632,7 @@ readme_lines <- c(
   "- 6-class binned VI only SVM",
   "",
   "Important:",
-  "- Only the grouped 80% training partition was used.",
+  "- Only the grouped 90% training partition was used.",
   "- The separate grouped holdout test set was not used.",
   "- SMOTE was applied only within the outer training folds.",
   "- Outer fold thresholds were the new leakage-safe fold-specific thresholds."

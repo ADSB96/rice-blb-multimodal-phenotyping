@@ -514,9 +514,9 @@ for (i in seq_len(nrow(model_specs))) {
   cluster_setting <- spec$cluster_setting[[1]]
   model_id <- spec$model_id[[1]]
 
-  trace_file <- file.path(master_root, sprintf("%s_grouped_train_80_traceability_master.csv", dataset_tag))
-  train_file <- file.path(data_root, cluster_setting, sprintf("%s_grouped_train_80_fulltrain_threshold_binned_pcavg_%s.csv", dataset_tag, cluster_setting))
-  test_file <- file.path(data_root, cluster_setting, sprintf("%s_grouped_test_20_fulltrain_threshold_binned_pcavg_%s.csv", dataset_tag, cluster_setting))
+  trace_file <- file.path(master_root, sprintf("%s_grouped_train_90_traceability_master.csv", dataset_tag))
+  train_file <- file.path(data_root, cluster_setting, sprintf("%s_grouped_train_90_fulltrain_threshold_binned_pcavg_%s.csv", dataset_tag, cluster_setting))
+  test_file <- file.path(data_root, cluster_setting, sprintf("%s_grouped_test_10_fulltrain_threshold_binned_pcavg_%s.csv", dataset_tag, cluster_setting))
 
   log_line("\nRunning %s\n", model_id)
   log_line("  train: %s\n", train_file)
@@ -600,7 +600,7 @@ for (i in seq_len(nrow(model_specs))) {
     sprintf("Severity categories: %s", spec$severity_categories[[1]]),
     sprintf("Feature set: cluster ratio only (%s)", cluster_setting),
     "",
-    "Cross-validation summary (grouped 5-fold CV on the 80% training partition):",
+    "Cross-validation summary (grouped 5-fold CV on the 90% training partition):",
     capture.output(print(cv_summary_dt)),
     "",
     "Final holdout metrics:",
@@ -635,13 +635,13 @@ readme_lines <- c(
   "This folder contains grouped leakage-safe model runs for both 4-class and 6-class BLB severity.",
   "",
   "Pipeline:",
-  "1. Uses the existing grouped 80% training / 20% holdout split from Train_test_master.",
-  "2. Uses the fixed grouped 5-fold assignments (cv_fold) already defined for the 80% training partition.",
+  "1. Uses the existing grouped 90% training / 10% holdout split from Train_test_master.",
+  "2. Uses the fixed grouped 5-fold assignments (cv_fold) already defined for the 90% training partition.",
   "3. Tunes SVM cost and gamma inside each outer fold using grouped inner folds built from unit_norm.",
   "4. Applies SMOTE only to training data inside each inner fold, each outer fold, and the final full-training fit.",
   "5. Trains only on cluster-ratio features.",
   "6. Saves fold-level metrics, mean, SD, and 95% confidence intervals across the 5 held-out folds.",
-  "7. Chooses consensus parameters across the 5 outer folds, then trains a final model on the full 80% training set and evaluates once on the untouched 20% holdout.",
+  "7. Chooses consensus parameters across the 5 outer folds, then trains a final model on the full 90% training set and evaluates once on the untouched 10% holdout.",
   "",
   "Key files:",
   "- cluster_ratio_only_svm_cv_holdout_summary.csv: detailed cross-validation and final holdout summary for all six models.",

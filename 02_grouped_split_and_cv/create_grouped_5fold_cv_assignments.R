@@ -6,11 +6,11 @@ set.seed(123)
 setDTthreads(0)
 
 base_dir <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
-split_dir <- file.path(base_dir, "jani_stuff", "grouped_holdout_80_20_microplotsafe_split")
+split_dir <- file.path(base_dir, "jani_stuff", "grouped_holdout_90_10_microplotsafe_split")
 
 paths <- list(
-  six_train = file.path(split_dir, "sixclass_grouped_train_80_with_structural.csv"),
-  four_train = file.path(split_dir, "fourclass_grouped_train_80_with_structural.csv")
+  six_train = file.path(split_dir, "sixclass_grouped_train_90_with_structural.csv"),
+  four_train = file.path(split_dir, "fourclass_grouped_train_90_with_structural.csv")
 )
 
 for (p in paths) {
@@ -192,7 +192,7 @@ write_cv_outputs <- function(dt, dataset_tag) {
   fwrite(cand, file.path(split_dir, sprintf("%s_grouped5fold_candidate_scores.csv", dataset_tag)))
 
   dt_with_fold <- merge(dt, assign_dt[, .(unit_norm, cv_fold = fold)], by = "unit_norm", all.x = TRUE, sort = FALSE)
-  fwrite(dt_with_fold, file.path(split_dir, sprintf("%s_grouped_train_80_with_cv_fold.csv", dataset_tag)))
+  fwrite(dt_with_fold, file.path(split_dir, sprintf("%s_grouped_train_90_with_cv_fold.csv", dataset_tag)))
 
   fwrite(best$metrics$fold_class_balance, file.path(split_dir, sprintf("%s_grouped5fold_class_balance.csv", dataset_tag)))
   fwrite(best$metrics$unit_counts, file.path(split_dir, sprintf("%s_grouped5fold_unit_counts.csv", dataset_tag)))
