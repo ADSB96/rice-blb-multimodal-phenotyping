@@ -44,6 +44,6 @@ git push -u origin main
 
 ## Notes
 
-- The shared public input file is expected at `input_data/complete_dataset.csv`.
-- The scripts write analysis outputs under `jani_stuff/`, which can remain private in your working environment.
-- If you want to include a manuscript-ready dataset in the repository, add it explicitly before `git add .`.
+- The shared public inputs are `input_data/training_90.csv`, `input_data/holdout_test_10.csv`, and `input_data/training_90_grouped5fold_unit_assignments.csv`.
+- These files contain the grouped 90/10 split used for the manuscript, with `cv_fold` labels attached only to the 90% training set.
+- Model outputs are written to `outputs/` by default, which is ignored by git.

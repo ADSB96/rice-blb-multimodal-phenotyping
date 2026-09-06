@@ -4,3 +4,4 @@
 .Rproj.user/
 __pycache__/
 *.pyc
+outputs/
