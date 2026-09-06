@@ -25,12 +25,12 @@ spec_file <- Sys.getenv("MODEL_SPEC_FILE", unset = file.path(script_dir, "revise
 out_root <- Sys.getenv("MODEL_OUTPUT_ROOT", unset = file.path(jani_root, "publication_table2_grouped_cv_holdout_runs"))
 
 default_paths <- list(
-  four_train = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "fourclass_grouped_train_80_fulltrain_threshold_binned.csv"),
-  four_test = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "fourclass_grouped_test_20_fulltrain_threshold_binned.csv"),
-  six_train = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "sixclass_grouped_train_80_fulltrain_threshold_binned.csv"),
-  six_test = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "sixclass_grouped_test_20_fulltrain_threshold_binned.csv"),
-  four_cv_assign = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "cv_fold_specific", "fourclass", "fourclass_grouped_train_80_cv_validation_master_binned.csv"),
-  six_cv_assign = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "cv_fold_specific", "sixclass", "sixclass_grouped_train_80_cv_validation_master_binned.csv")
+  four_train = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "fourclass_grouped_train_90_fulltrain_threshold_binned.csv"),
+  four_test = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "fourclass_grouped_test_10_fulltrain_threshold_binned.csv"),
+  six_train = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "sixclass_grouped_train_90_fulltrain_threshold_binned.csv"),
+  six_test = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "holdout_fulltrain_fit", "sixclass_grouped_test_10_fulltrain_threshold_binned.csv"),
+  four_cv_assign = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "cv_fold_specific", "fourclass", "fourclass_grouped_train_90_cv_validation_master_binned.csv"),
+  six_cv_assign = file.path(jani_root, "grouped_microplotsafe_rebinned_datasets", "cv_fold_specific", "sixclass", "sixclass_grouped_train_90_cv_validation_master_binned.csv")
 )
 
 paths <- list(
@@ -922,13 +922,13 @@ readme_lines <- c(
   "Table 2 grouped-CV + untouched holdout model outputs",
   "",
   "What this script does:",
-  "1. Uses grouped 5-fold cross-validation on the 80% training partition only.",
+  "1. Uses grouped 5-fold cross-validation on the 90% training partition only.",
   "2. Keeps all rows from the same microplot/unit in the same fold.",
   "3. Applies SMOTE only within training data, never to held-out validation or test data.",
   "4. Tunes model parameters inside each outer fold.",
   "5. Saves fold-level metrics, ordinal metrics, mean, standard deviation, and 95% confidence intervals.",
   "6. Chooses consensus parameters across outer folds.",
-  "7. Trains a final model on the full 80% training set and evaluates once on the untouched 20% holdout test set.",
+  "7. Trains a final model on the full 90% training set and evaluates once on the untouched 10% holdout test set.",
   "8. Saves feature sets, final parameters, and manuscript-table-ready summary inputs.",
   "",
   sprintf("Model spec file used: %s", spec_file),

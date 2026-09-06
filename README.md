@@ -11,7 +11,7 @@ The bundle is organized around four parts of the analysis pipeline:
 2. Leakage-aware rebinning
    - simulated-annealing VI thresholds can be refit using training-only data.
 3. Final model evaluation
-   - grouped 5-fold cross-validation on the 80% training partition, followed by a single evaluation on the untouched 20% holdout test set.
+   - grouped 5-fold cross-validation on the 90% training partition, followed by a single evaluation on the untouched 10% holdout test set.
 4. Publication tables
    - manuscript-ready Table 2 and supplementary cluster-ratio summary tables.
 
@@ -21,7 +21,7 @@ The bundle is organized around four parts of the analysis pipeline:
   - Historical full-dataset binning scripts retained for transparency.
   - These are not the preferred scripts for the reviewer-corrected manuscript workflow.
 - `02_grouped_split_and_cv/`
-  - Scripts to create the microplot-safe 80/20 holdout split, grouped 5-fold assignments, and traceability sheets.
+  - Scripts to create the microplot-safe 90/10 holdout split, grouped 5-fold assignments, and traceability sheets.
 - `03_rebinning/`
   - Training-only simulated-annealing threshold fitting and rebinned dataset construction.
 - `04_models/`
@@ -48,11 +48,11 @@ Script:
 - `02_grouped_split_and_cv/create_grouped_holdout_split.R`
 
 Purpose:
-- creates the 80% training and 20% holdout test split.
+- creates the 90% training and 10% holdout test split.
 - keeps each microplot/unit in only one partition.
 - preserves severity-class balance as closely as possible.
 
-### 2. Create grouped 5-fold assignments on the 80% training partition
+### 2. Create grouped 5-fold assignments on the 90% training partition
 
 Script:
 - `02_grouped_split_and_cv/create_grouped_5fold_cv_assignments.R`
@@ -78,7 +78,7 @@ Purpose:
 - refits simulated-annealing thresholds without using holdout-test samples.
 - exports:
   - fold-specific rebinned datasets for grouped cross-validation workflows.
-  - full-training-threshold rebinned datasets for final 80/20 holdout evaluation.
+  - full-training-threshold rebinned datasets for final 90/10 holdout evaluation.
 
 Note:
 - use this script when you want threshold fitting itself to be confined to training data.
@@ -104,13 +104,13 @@ Purpose:
   - `cluster ratio + binned VI (XGB top30) + structural`
 
 What the script does:
-- performs grouped 5-fold CV on the 80% training partition.
+- performs grouped 5-fold CV on the 90% training partition.
 - tunes parameters inside each outer fold.
 - applies SMOTE only to training data.
 - records mean, SD, and 95% CI across folds.
 - chooses consensus parameters across outer folds.
-- trains a final model on the full 80% training set.
-- evaluates once on the untouched 20% holdout test set.
+- trains a final model on the full 90% training set.
+- evaluates once on the untouched 10% holdout test set.
 - writes:
   - per-model fold metrics
   - per-model ordinal metrics
@@ -154,7 +154,7 @@ The publication model runners are written to preserve the reviewer-requested saf
 - grouped 5-fold CV on the training partition only.
 - SMOTE applied only after fold assignment and only to the training portion of a fold.
 - parameter tuning performed inside training data only.
-- final model trained once on the full 80% training set and evaluated once on the untouched 20% holdout.
+- final model trained once on the full 90% training set and evaluated once on the untouched 10% holdout.
 - ordinal metrics are recorded alongside standard classification metrics:
   - quadratic weighted Cohen's kappa (`QWK`)
   - mean absolute error in class units (`MAE`)

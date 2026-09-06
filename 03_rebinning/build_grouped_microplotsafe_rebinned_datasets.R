@@ -9,7 +9,7 @@ set.seed(123)
 setDTthreads(0)
 
 base_dir <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
-input_dir <- file.path(base_dir, "jani_stuff", "grouped_holdout_80_20_microplotsafe_split")
+input_dir <- file.path(base_dir, "jani_stuff", "grouped_holdout_90_10_microplotsafe_split")
 analysis_root <- file.path(base_dir, "jani_stuff", "grouped_microplotsafe_rebinned_datasets")
 cv_root <- file.path(analysis_root, "cv_fold_specific")
 holdout_root <- file.path(analysis_root, "holdout_fulltrain_fit")
@@ -26,12 +26,12 @@ script_path <- if (length(script_arg) > 0L) {
 }
 
 paths <- list(
-  six_cv_train = file.path(input_dir, "sixclass_grouped_train_80_with_cv_fold.csv"),
-  four_cv_train = file.path(input_dir, "fourclass_grouped_train_80_with_cv_fold.csv"),
-  six_hold_train = file.path(input_dir, "sixclass_grouped_train_80_with_structural.csv"),
-  six_hold_test = file.path(input_dir, "sixclass_grouped_test_20_with_structural.csv"),
-  four_hold_train = file.path(input_dir, "fourclass_grouped_train_80_with_structural.csv"),
-  four_hold_test = file.path(input_dir, "fourclass_grouped_test_20_with_structural.csv")
+  six_cv_train = file.path(input_dir, "sixclass_grouped_train_90_with_cv_fold.csv"),
+  four_cv_train = file.path(input_dir, "fourclass_grouped_train_90_with_cv_fold.csv"),
+  six_hold_train = file.path(input_dir, "sixclass_grouped_train_90_with_structural.csv"),
+  six_hold_test = file.path(input_dir, "sixclass_grouped_test_10_with_structural.csv"),
+  four_hold_train = file.path(input_dir, "fourclass_grouped_train_90_with_structural.csv"),
+  four_hold_test = file.path(input_dir, "fourclass_grouped_test_10_with_structural.csv")
 )
 
 for (p in paths) {
@@ -640,7 +640,7 @@ for (dataset_tag in c("sixclass", "fourclass")) {
 
   validation_master <- safe_unique(rbindlist(validation_parts, use.names = TRUE, fill = TRUE))
   setorder(validation_master, unit_norm, timestamp_chr, source_file)
-  master_path <- file.path(dataset_dir, sprintf("%s_grouped_train_80_cv_validation_master_binned.csv", dataset_tag))
+  master_path <- file.path(dataset_dir, sprintf("%s_grouped_train_90_cv_validation_master_binned.csv", dataset_tag))
   fwrite(validation_master, master_path)
 
   cv_summary_rows[[length(cv_summary_rows) + 1L]] <- data.table(
@@ -670,10 +670,10 @@ holdout_fit <- fit_thresholds_from_info(
 )
 
 holdout_exports <- list(
-  list(tag = "sixclass_grouped_train_80_fulltrain_threshold_binned", dt = six_hold_train_dt),
-  list(tag = "sixclass_grouped_test_20_fulltrain_threshold_binned", dt = six_hold_test_dt),
-  list(tag = "fourclass_grouped_train_80_fulltrain_threshold_binned", dt = four_hold_train_dt),
-  list(tag = "fourclass_grouped_test_20_fulltrain_threshold_binned", dt = four_hold_test_dt)
+  list(tag = "sixclass_grouped_train_90_fulltrain_threshold_binned", dt = six_hold_train_dt),
+  list(tag = "sixclass_grouped_test_10_fulltrain_threshold_binned", dt = six_hold_test_dt),
+  list(tag = "fourclass_grouped_train_90_fulltrain_threshold_binned", dt = four_hold_train_dt),
+  list(tag = "fourclass_grouped_test_10_fulltrain_threshold_binned", dt = four_hold_test_dt)
 )
 
 holdout_summary_rows <- list()
@@ -709,7 +709,7 @@ readme_lines <- c(
   "   Fold-specific simulated-annealing thresholds were re-fit using only the rows outside the held-out fold,",
   "   then applied to that fold's training and validation rows.",
   "2. holdout_fulltrain_fit/",
-  "   One threshold set was fit using only the grouped 80% training split, then applied to both train and test.",
+  "   One threshold set was fit using only the grouped 90% training split, then applied to both train and test.",
   "",
   "Old VI bin-proportion columns were removed and replaced with the newly computed leakage-safe VI bin-proportion columns.",
   "",

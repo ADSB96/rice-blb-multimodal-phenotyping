@@ -6,7 +6,7 @@ set.seed(123)
 setDTthreads(0)
 
 base_dir <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
-out_dir <- file.path(base_dir, "jani_stuff", "grouped_holdout_80_20_microplotsafe_split")
+out_dir <- file.path(base_dir, "jani_stuff", "grouped_holdout_90_10_microplotsafe_split")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 # Add the shared de-identified complete dataset here before running the workflow.
@@ -126,8 +126,8 @@ score_candidate <- function(six_dt, four_dt, groups_dt, fold_id) {
 
   group_frac_test <- length(test_groups) / uniqueN(six_dt$unit_norm)
   score <- 0
-  score <- score + 50 * abs(six_met$row_frac_test - 0.20)
-  score <- score + 25 * abs(group_frac_test - 0.20)
+  score <- score + 50 * abs(six_met$row_frac_test - 0.10)
+  score <- score + 25 * abs(group_frac_test - 0.10)
   score <- score + 10 * six_met$mean_abs_diff + 10 * six_met$max_abs_diff
   score <- score + 8 * four_met$mean_abs_diff + 8 * four_met$max_abs_diff
   score <- score + 100 * six_met$missing_test + 100 * six_met$missing_train
@@ -197,8 +197,8 @@ for (seed in search_seeds) {
 }
 
 candidate_dt <- rbindlist(candidate_rows, use.names = TRUE, fill = TRUE)
-candidate_dt[, test_row_gap := abs(six_test_row_frac - 0.20)]
-candidate_dt[, test_group_gap := abs(group_frac_test - 0.20)]
+candidate_dt[, test_row_gap := abs(six_test_row_frac - 0.10)]
+candidate_dt[, test_group_gap := abs(group_frac_test - 0.10)]
 setorder(candidate_dt, score, test_row_gap, test_group_gap, six_max_abs_diff, four_max_abs_diff)
 fwrite(candidate_dt, file.path(out_dir, "candidate_split_scores.csv"))
 
@@ -223,10 +223,10 @@ six_test <- six_split[split == "test"][, split := NULL]
 four_train <- four_split[split == "train"][, split := NULL]
 four_test <- four_split[split == "test"][, split := NULL]
 
-fwrite(six_train, file.path(out_dir, "sixclass_grouped_train_80_with_structural.csv"))
-fwrite(six_test, file.path(out_dir, "sixclass_grouped_test_20_with_structural.csv"))
-fwrite(four_train, file.path(out_dir, "fourclass_grouped_train_80_with_structural.csv"))
-fwrite(four_test, file.path(out_dir, "fourclass_grouped_test_20_with_structural.csv"))
+fwrite(six_train, file.path(out_dir, "sixclass_grouped_train_90_with_structural.csv"))
+fwrite(six_test, file.path(out_dir, "sixclass_grouped_test_10_with_structural.csv"))
+fwrite(four_train, file.path(out_dir, "fourclass_grouped_train_90_with_structural.csv"))
+fwrite(four_test, file.path(out_dir, "fourclass_grouped_test_10_with_structural.csv"))
 
 manifest_dt <- best_assign[, .(unit_norm = group, holdout_fold = fold, split)]
 fwrite(manifest_dt, file.path(out_dir, "grouped_holdout_unit_manifest.csv"))
@@ -261,7 +261,7 @@ selection_summary <- data.table(
 fwrite(selection_summary, file.path(out_dir, "grouped_holdout_selection_summary.csv"))
 
 summary_lines <- c(
-  "Grouped 80/20 microplot-safe holdout split",
+  "Grouped 90/10 microplot-safe holdout split",
   "",
   sprintf("Selected seed: %d", best_seed),
   sprintf("Selected holdout fold: %d", best_fold),
@@ -278,10 +278,10 @@ summary_lines <- c(
   sprintf("4-class max abs proportion difference: %.6f", best$four$max_abs_diff),
   "",
   "Files written:",
-  "- sixclass_grouped_train_80_with_structural.csv",
-  "- sixclass_grouped_test_20_with_structural.csv",
-  "- fourclass_grouped_train_80_with_structural.csv",
-  "- fourclass_grouped_test_20_with_structural.csv",
+  "- sixclass_grouped_train_90_with_structural.csv",
+  "- sixclass_grouped_test_10_with_structural.csv",
+  "- fourclass_grouped_train_90_with_structural.csv",
+  "- fourclass_grouped_test_10_with_structural.csv",
   "- grouped_holdout_unit_manifest.csv",
   "- grouped_holdout_class_balance.csv",
   "- grouped_holdout_selection_summary.csv",
@@ -289,5 +289,5 @@ summary_lines <- c(
 )
 writeLines(summary_lines, file.path(out_dir, "README.txt"))
 
-cat("Saved grouped 80/20 microplot-safe holdout split in:\n")
+cat("Saved grouped 90/10 microplot-safe holdout split in:\n")
 cat(out_dir, "\n")

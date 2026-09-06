@@ -161,8 +161,8 @@ append_model_log <- function(rows) {
   fwrite(combined, log_file)
 }
 
-train_file <- file.path(input_root, "fourclass_grouped_train_80_fulltrain_threshold_binned.csv")
-test_file <- file.path(input_root, "fourclass_grouped_test_20_fulltrain_threshold_binned.csv")
+train_file <- file.path(input_root, "fourclass_grouped_train_90_fulltrain_threshold_binned.csv")
+test_file <- file.path(input_root, "fourclass_grouped_test_10_fulltrain_threshold_binned.csv")
 params_file <- file.path(cv_model_root, "4class_binned_vi_svm_rebinned_grouped5cv_trainonly_selected_params.csv")
 fold_metrics_file <- file.path(cv_model_root, "4class_binned_vi_svm_rebinned_grouped5cv_trainonly_fold_metrics.csv")
 
@@ -217,14 +217,14 @@ consensus_gamma <- as.numeric(names(sort(table(param_dt$gamma), decreasing = TRU
 model_specs <- list(
   list(
     model_id = "4class_binned_vi_svm_holdout_bestfoldparams",
-    model_name = "4-class binned VI SVM on full 80% train with best-fold CV parameters",
+    model_name = "4-class binned VI SVM on full 90% train with best-fold CV parameters",
     cost = best_fold_row$cost,
     gamma = best_fold_row$gamma,
     param_source = sprintf("best outer fold = %d", best_fold_row$fold)
   ),
   list(
     model_id = "4class_binned_vi_svm_holdout_consensusparams",
-    model_name = "4-class binned VI SVM on full 80% train with consensus CV parameters",
+    model_name = "4-class binned VI SVM on full 90% train with consensus CV parameters",
     cost = consensus_cost,
     gamma = consensus_gamma,
     param_source = "consensus across 5 CV folds (modal cost and modal gamma)"
@@ -297,7 +297,7 @@ for (spec in model_specs) {
     severity_categories = 4L,
     feature_label = "binned VI",
     feature_count = length(feature_cols),
-    split = "full 80% grouped train, tested on untouched 20% grouped holdout",
+    split = "full 90% grouped train, tested on untouched 10% grouped holdout",
     param_source = spec$param_source,
     cost = spec$cost,
     gamma = spec$gamma,
@@ -314,8 +314,8 @@ for (spec in model_specs) {
     spec$model_name,
     "",
     "Training/evaluation design:",
-    "- Full grouped 80% training partition used for model fitting",
-    "- Untouched grouped 20% holdout test set used once for final evaluation",
+    "- Full grouped 90% training partition used for model fitting",
+    "- Untouched grouped 10% holdout test set used once for final evaluation",
     "- Only binned VI features were used",
     "- Scaling estimated from training set only and applied to holdout test set",
     "- SMOTE applied on the full training set only",
@@ -365,7 +365,7 @@ for (spec in model_specs) {
     run_key = file.path("jani_stuff", "grouped_microplotsafe_rebinned_datasets", "final_holdout_4class_binned_vi_svm_compare", spec$model_id),
     model_name = spec$model_name,
     algorithm = "SVM",
-    split = "grouped holdout 80/20 final test",
+    split = "grouped holdout 90/10 final test",
     smote_strategy = "SMOTE on full training set only",
     feature_set = "binned VI (4-class final holdout)",
     accuracy = met$accuracy,
@@ -387,7 +387,7 @@ fwrite(comparison_dt, file.path(out_root, "final_holdout_4class_binned_vi_svm_co
 comparison_lines <- c(
   "Final 4-class binned VI SVM holdout comparison",
   "",
-  "Both models were trained on the same rebinned 80% training partition,",
+  "Both models were trained on the same rebinned 90% training partition,",
   "used the same training-only scaling, and used the same SMOTE-augmented training data.",
   "They differ only in the selected SVM hyperparameters.",
   "",
@@ -410,8 +410,8 @@ append_model_log(rbindlist(perf_rows, use.names = TRUE, fill = TRUE))
 readme_lines <- c(
   "Final holdout 4-class binned VI SVM comparison",
   "",
-  "This folder compares two final SVMs trained on the full grouped 80% training partition",
-  "and evaluated once on the untouched grouped 20% holdout test set.",
+  "This folder compares two final SVMs trained on the full grouped 90% training partition",
+  "and evaluated once on the untouched grouped 10% holdout test set.",
   "",
   "Models:",
   "- Best-fold CV parameters",
